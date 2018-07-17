@@ -1,0 +1,77 @@
+<!DOCTYPE HTML>
+<html ng-app="exampleApp">
+<head>
+    <title>Filter</title>
+    <script src="ngmodules/angular.js"></script>
+    <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet">
+
+    <script>
+        angular.module("exampleApp", [])
+            .controller("defaultCtrl", function ($scope, $filter) {
+                $scope.products = [
+                    { name: "Apples", category: "Fruit", price: 1.20, expiry: 10 },
+                    { name: "Bananas", category: "Fruit", price: 2.42, expiry: 7 },
+                    { name: "Pears", category: "Fruit", price: 2.02, expiry: 6 },
+
+                    { name: "Tuna", category: "Fish", price: 20.45, expiry: 3 },
+                    { name: "Salmon", category: "Fish", price: 17.93, expiry: 2 },
+                    { name: "Trout", category: "Fish", price: 12.93, expiry: 4 },
+
+                    { name: "Beer", category: "Drinks", price: 2.99, expiry: 365 },
+                    { name: "Wine", category: "Drinks", price: 8.99, expiry: 365 },
+                    { name: "Whiskey", category: "Drinks", price: 45.99, expiry: 365 }
+                ];
+
+                $scope.getExpiryDate = (days) => {
+                    let now = new Date();
+                    return now.setDate(now.getDate() + days);
+                };
+                $scope.limitVal = 5;
+                $scope.limitRange = [];
+
+                for(var i=(0-$scope.products.length); i<=$scope.products.length; i++) {
+                    $scope.limitRange.push(i.toString());
+                };
+
+                $scope.selectProducts = (product) =>
+                    product.category === "Fish" || product.name === "Beer";
+
+            })
+    </script>
+    <script src="filter/customFilters.js"></script>
+</head>
+<body ng-controller="defaultCtrl" class="container-fluid">
+    <div class="card card-default">
+        <div class="card-heading">
+            <h3>
+                Products
+                <span class="label label-primary">{{ products.length }}</span>
+            </h3>
+        </div>
+        <div class="card-body">
+            Limit: <select ng-model="limitVal" ng-options="item for item in limitRange"></select>
+        </div>
+    </div>
+    <div class="card-body">
+        <table class="table table-striped table-bordered table-condensed">
+            <thead>
+                <tr>
+                    <td>Name</td>
+                    <td>Category</td>
+                    <td>Expiry</td>
+                    <td class="text-right">Price</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="product in products|take: 2: 1">
+                    <td>{{ product.name| labelCase }}</td>
+                    <td>{{ product.category| labelCase: true }}</td>
+                    <td>{{ getExpiryDate(product.expiry)| date: 'shortDate' }}</td>
+                    <td>{{ product.price| number: 2 }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
